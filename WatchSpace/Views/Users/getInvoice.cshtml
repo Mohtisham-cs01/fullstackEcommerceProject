@@ -1,0 +1,64 @@
+﻿@using WatchSpace.Models;
+
+@model List<Order>
+
+
+
+@{ Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Get Invoice"; }
+
+<div class="container my-5">
+    <h1>Invoice</h1>
+    <div><h4>Total Bill: @Model[0].TotalBill</h4></div>
+    <div><h4>Status: @Model[0].Status</h4></div>
+    <button onclick="printInvoice()" class="btn btn-primary">Print Invoice</button>
+    <div class="row mt-5">
+        <div class="col-sm-12" id="tab">
+            <table class="table  orderTable" border="1" style="border: 2px solid #dee2e6;">
+                <thead>
+                    <tr>
+                        <th class="text-center">Product Name</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-center">Product Price</th>
+                        <th class="text-center">Total Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+
+                    @foreach (var item in Model)
+                    {
+
+
+        <tr class="">
+            <td class="text-center">@item.Product.Name</td>
+            <td class="text-center">@item.PurchasedQuantity</td>
+            <td class="text-center">@item.Sale_Price</td>
+            <td class="text-center">@(item.Sale_Price * item.PurchasedQuantity)</td>
+        </tr>
+}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).on("click", printInvoice);
+
+    //function printInvoicettt() {
+    //    var sectionId = $("#tab").attr("id");
+    //    var sectionContent = $("#" + sectionId).html();
+
+    //    var printWindow = window.open('', '_blank');
+    //    printWindow.document.write('<html><head><title>Print</title></head><body>' + sectionContent + '</body></html>');
+    //    printWindow.document.close();
+    //    printWindow.print();
+    //    printWindow.close();
+    //}
+
+    function printInvoice() {
+
+        window.print();
+    }</script>

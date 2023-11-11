@@ -1,0 +1,101 @@
+﻿@using WatchSpace.Models
+
+@model List<Order>
+
+
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Download Confirmation";
+    //TempData["orders"] = Model;
+    Model.Reverse();
+}
+<style>
+    .button-confirm {
+        padding: 0.8em;
+        border-radius: 9px;
+        font-size: 1.3em;
+        color: #fff;
+        background-color: #1b6ec2;
+        border-color: #1861ac;
+    }
+    .card-confirmation {
+        width: 280px;
+        border-radius: 10px;
+        background-color: #c4e3ff;
+        padding: 51px;
+        text-align: center;
+        font-family:Arial;
+    }
+</style>
+<div style=" height: 100vh; display: flex; align-items: center; justify-content: center;">
+
+<div class="card-confirmation">
+    <div>
+        <h1 >Confirmation</h1>
+    </div>
+    <div style="display: flex; justify-content: center; align-items: center; ">
+        <button class="button-confirm" id="exportButton" onclick="createAndDownloadExcel()">Confirm To Download</button>
+    </div>
+    <h5> No. of records ready to download:@Model.Count()</h5>
+</div>
+</div>
+
+
+
+
+<script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+
+
+<script>
+    function createAndDownloadExcel() {
+        //const orders = [
+        //    { id: 1, customer: 'John Doe', total: 100, date: "2-3-23" },
+        //    { id: 2, customer: 'Jane Smith', total: 150, date: "2-3-23" },
+        //    { id: 3, customer: 'Jane Smith', total: 150, date: "2-3-23" },
+        //    { id: 4, customer: 'Jane Smith', total: 150, date: "2-3-23" },
+        //    { id: 5, customer: 'Jane Smith', total: 150, date: "2-3-23" },
+
+        //    // Add more order objects as needed
+        //];
+
+        const orders = @Html.Raw(Json.Serialize(Model));
+
+  
+        console.table(orders);
+        // assume this is the original JSON data
+        const filteredOrders = orders.map(order => {
+         delete order.user;
+         delete order.product;
+         return order;
+        });
+
+        const worksheet = XLSX.utils.json_to_sheet(filteredOrders);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Orders');
+
+        const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+        const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+        var fileName = `orders_report_${Date.now()}.xlsx`;
+
+
+        if (navigator.msSaveBlob) {
+            // For IE and Edge browsers
+            navigator.msSaveBlob(blob, fileName);
+        } else {
+            // For other browsers
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.setAttribute('download', fileName);
+            link.style.display = 'none';
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.location.href ="https://localhost:44311/Admin/Reports"
+        }
+    }
+
+
+</script>

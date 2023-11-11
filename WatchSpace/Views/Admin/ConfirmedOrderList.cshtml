@@ -1,0 +1,220 @@
+﻿@using WatchSpace.Models
+@using WatchSpace.Helper
+
+@model List<Order>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@{ int? status = ViewData["Status"] as int?; }
+
+
+<h1 class="text-center pt-5"> Order List</h1>
+
+<div>
+    @using (Html.BeginForm("searchStatus", "Admin", FormMethod.Post, new { id = "statusForm" }))
+    {
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label>Select Status:</label><br>
+
+                    <label class="radio-inline">
+                        <input type="radio" name="status" value="Pending" @(status == 0 ? "checked" : "") onchange="submitForm1(this)"> Pending
+                    </label>
+
+                    <label class="radio-inline">
+                        <input type="radio" name="status" value="Processing" @(status == 1 ? "checked" : "") onchange="submitForm1(this)"> Processing
+                    </label>
+
+                    <label class="radio-inline">
+                        <input type="radio" name="status" value="OnTheWay" @(status == 2 ? "checked" : "") onchange="submitForm1(this)"> OnTheWay
+                    </label>
+
+                    <label class="radio-inline">
+                        <input type="radio" name="status" value="Delivered" @(status == 3 ? "checked" : "") onchange="submitForm1(this)"> Delivered
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <button type="button" class="btn btn-primary btnClear float-right">Clear</button>
+            </div>
+        </div>
+
+    }
+
+
+
+
+</div>
+<div class="container my-5">
+    <div class="row mt-5">
+        <div class="col-sm-12">
+            <table class="table  orderTable" border="1" style="border: 2px solid #dee2e6;">
+                <thead>
+                    <tr>
+                        <th class="text-center">Customer Name</th>
+                        <th class="text-center">Customer Email</th>
+                        <th class="text-center">Product Name</th>
+                        <th class="text-center">Purchased Quantity</th>
+                        <th class="text-center">Date</th>
+                        <th class="text-center">Refrence Number</th>
+                        <th class="text-center">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+
+                    @foreach (var item in Model)
+                    {
+                        string customerFullName = item.User.First_Name + " " + item.User.Last_Name;
+
+                        int hash = Convert.ToInt32(item.RefrenceNumber.Split('_')[1].Substring(0, 6));
+                        var uniqueCode = '#' + hash.ToString();
+
+                        <tr class="@item.RefrenceNumber">
+                            <td class="text-center">
+                                @customerFullName
+                                <small id="colo" class="code-@uniqueCode" style=" background-color: @uniqueCode; color: @uniqueCode; border-radius: 5px ; font-size: inherit;">heloo</small>
+                                <div class="status" style="margin-top: 7px;color: black;background-color: #c1c1c1;padding: 2px 0;border-radius: 18px;">@item.Status</div>
+                            </td>
+                            <td class="text-center">@item.User.Email</td>
+                            <td class="text-center">@item.Product.Name</td>
+                            <td class="text-center">@item.PurchasedQuantity</td>
+                            <td class="text-center">@item.Date.Value.ToString("dddd, dd MMMM yyyy")</td>
+                            <td class="text-center">@item.RefrenceNumber</td>
+
+                            <td class="text-center">
+                                <form asp-controller="Admin" asp-action="UpdateStatus" onsubmit="submitForm(event)">
+                                    <div class="form-group">
+                                        <label for="status">Choose Status:</label>
+                                        <select name="status" id="selectStatus" class="form-control">
+                                            <option value="">Select Status</option>
+                                            <option value="Pending" selected="@((int)item.Status == (int)OrderStatus.Pending)">Pending</option>
+                                            <option value="Processing" selected="@((int)item.Status == (int)OrderStatus.Processing)">Processing</option>
+                                            <option value="OnTheWay" selected="@((int)item.Status == (int)OrderStatus.OnTheWay)">OnTheWay</option>
+                                            <option value="Delivered" selected="@((int)item.Status == (int)OrderStatus.Delivered)">Delivered</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btnStatus" data-reference-number="@item.RefrenceNumber">Update</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .color-0 {
+        background-color: black;
+        color: black;
+        border-radius: 5px;
+        font-size: inherit;
+    }
+
+    .color-1 {
+        background-color: #ff0000; /* Example color */
+        color: #ff0000; /* Example color */
+        border-radius: 5px;
+        font-size: inherit;
+    }
+
+    /** COnfirm Order List Form Alignment*/
+    .dataTables_wrapper .dataTables_filter {
+        display: flex !important;
+        justify-content: end;
+        align-items: end;
+    }
+</style>
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+
+        //$('.orderTable').DataTable();
+
+        $('.orderTable').DataTable({
+            "ordering": false,
+            "language": {
+                "lengthMenu": "Show _MENU_"
+            },
+            "lengthMenu": [10, 25, 50, 75, 100] // Remove the `Entries` text in pages filter
+        });
+
+    });
+
+
+    function submitForm1(radio) {
+        if (radio.checked) {
+            radio.closest("form").submit();
+        }
+    }
+
+    function handleOptionChange(radio) {
+
+
+        var selectedValue = radio.value;
+        console.log('Selected option: ' + selectedValue);
+
+    }
+
+
+
+
+    function submitForm(event) {
+        event.preventDefault();
+        const form = event.target;
+        const referenceNumber = form.querySelector('button').getAttribute('data-reference-number');
+        const status = form.querySelector('#selectStatus').value;
+        const formData = new FormData(form);
+        formData.append('referenceNumber', referenceNumber);
+        formData.append('status', status);
+        fetch(form.action, {
+            method: 'POST',
+            body: formData
+        }).then(response => {
+            if (response.ok) {
+                console.log(response)
+                window.location.href = response.url;
+
+
+            } else {
+                /* alert('An error occurred. Please try again.1');*/
+
+                // Find all matching rows based on reference number
+                const rows = document.querySelectorAll(`tr.${referenceNumber}`);
+                rows.forEach(row => {
+                    // Update the status dynamically
+                    const statusElement = row.querySelector('.status');
+                    statusElement.textContent = status;
+
+                    // Update the selected option
+                    const selectElement = row.querySelector('#selectStatus');
+                    const options = selectElement.options;
+                    for (let i = 0; i < options.length; i++) {
+                        if (options[i].value === status) {
+                            options[i].selected = true;
+                            break;
+                        }
+                    }
+                });
+            }
+        }).catch(error => {
+            console.error(error);
+            alert('An error occurred. Please try again.');
+        });
+
+
+    }
+
+    $(document).on("click", ".btnClear", function () {
+        window.location.href = "/Admin/ConfirmedOrderList";
+    });
+
+
+</script>

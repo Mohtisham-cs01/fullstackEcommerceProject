@@ -1,0 +1,425 @@
+﻿@using WatchSpace.Models
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model List<Product>
+
+
+
+<!-- slider section -->
+<section class="slider_section ">
+    <div id="customCarousel1" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="container-fluid ">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="detail-box">
+                                <h1>
+                                    Timeless Elegance
+                                </h1>
+                                <p>
+                                  Find Your Perfect Watch at WatchSpace
+                                </p>
+                                <div class="btn-box">
+                                    <a href="/Products/ProductList" class="btn1">
+                                        Shop Now
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="img-box">
+                                <img src="~/timups/images/slider-img.png" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item ">
+                <div class="container-fluid ">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="detail-box">
+                                <h1>
+                                    Upgrade Your Style
+                                </h1>
+                                <p>
+                                    Luxury Watches at Affordable Prices - Only at WatchSpace
+                                </p>
+                                <div class="btn-box">
+                                    <a href="/Products/ProductList" class="btn1">
+                                        Shop Now
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="img-box">
+                                <img src="~/images/w-8.jpg" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item ">
+                <div class="container-fluid ">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="detail-box">
+                                <h1>
+                                    Shop with Confidence
+                                </h1>
+                                <p>
+                                    Fast, Reliable Shipping and Hassle-Free Returns at WatchSpace
+                                </p>
+                                <div class="btn-box">
+                                    <a href="/Products/ProductList" class="btn1">
+                                        Shop Now
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="img-box">
+                                <img src="~/images/w-9.png" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ol class="carousel-indicators">
+            <li data-target="#customCarousel1" data-slide-to="0" class="active"></li>
+            <li data-target="#customCarousel1" data-slide-to="1"></li>
+            <li data-target="#customCarousel1" data-slide-to="2"></li>
+        </ol>
+    </div>
+
+</section>
+<!-- end slider section -->
+
+
+<!-- shop section -->
+<section class="shop_section layout_padding">
+    <div class="container">
+        <div class="heading_container heading_center">
+            <h2>
+                Latest Watches
+            </h2>
+        </div>
+        <div class="row">
+            <div class="col-md-6 ">
+                <div class="box">
+                    <a href="">
+                        <div class="img-box">
+                            <img src="~/timups/images/w1.png" />
+                        </div>
+                        <div class="detail-box">
+                            <h6>
+                                Smartwatch
+                            </h6>
+                            <h6>
+                                Price:
+                                <span>
+                                    $300
+                                </span>
+                            </h6>
+                        </div>
+                        <div class="new">
+                            <span>
+                                Featured
+                            </span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            @foreach (var item in Model)
+            {
+            <div class="col-sm-6 col-xl-3" >
+                <div class="box" style=" background-color: white; box-shadow: 5px 5px 5px 0 rgba(0, 0, 0, 0.25), -2px -2px 3px 0 rgba(0, 0, 0, 0.05) !important;">
+                    <a href="">
+                        <div class="img-box" >
+                            <img src="@item.Image"/>  
+                        </div>
+                        <div class="detail-box">
+                            <h6>
+                                Smartwatch
+                            </h6>
+                            <h6>
+                                Price:
+                                <span>
+                                  $ @item.Display_Price
+                                </span>
+                            </h6>
+                        </div>
+                        <div class="new">
+                            <span>
+                                New
+                            </span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            }
+        </div>
+            
+        <div class="btn-box">
+            <a href="/Products/ProductList">
+                View All
+            </a>
+        </div>
+    </div>
+</section>
+<!-- end shop section -->
+
+
+<!-- about section -->
+<section class="about_section layout_padding">
+    <div class="container  ">
+        <div class="row">
+            <div class="col-md-6 col-lg-5 ">
+                <div class="img-box">
+                    <img src="~/timups/images/about-img.png" />
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-7">
+                <div class="detail-box">
+                    <div class="heading_container">
+                        <h2>
+                            About Us
+                        </h2>
+                    </div>
+                    <p>
+                        At WatchSpace, we understand that buying a watch is a significant investment, which is why we only partner with the most reputable and trusted watch brands in the industry. Our collection includes brands such as Rolex, Omega, Breitling, Tag Heuer, and many more, all of which are known for their quality craftsmanship and timeless designs.
+
+                        Our website is designed to make your shopping experience as easy and enjoyable as possible.
+                    </p>
+                    <a href="/Home/about">
+                        Read More
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- end about section -->
+
+
+<!-- feature section -->
+
+<section class="feature_section layout_padding">
+    <div class="container">
+        <div class="heading_container">
+            <h2>
+                Features Of Our Watches
+            </h2>
+            <p>
+                What makes our wacthes stand out!
+            </p>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-lg-3">
+                <div class="box">
+                    <div class="img-box" >
+                        <img src="~/timups/images/f1.png" />
+                    </div>
+                    <div class="detail-box">
+                        <h5>
+                            Fitness Tracking
+                        </h5>
+                        <p>
+                        </p>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="box">
+                    <div class="img-box">
+                        <img src="~/timups/images/f2.png" />
+                    </div>
+                    <div class="detail-box">
+                        <h5>
+                            Alerts & Notifications
+                        </h5>
+                        <p>
+                        </p>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="box">
+                    <div class="img-box">
+                        <img src="~/timups/images/f3.png" />
+                    </div>
+                    <div class="detail-box">
+                        <h5>
+                            Messages
+                        </h5>
+                        <p>
+                        </p>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="box">
+                    <div class="img-box">
+                        <img src="~/timups/images/f4.png" />
+                    </div>
+                    <div class="detail-box">
+                        <h5>
+                            Bluetooth
+                        </h5>
+                        <p>
+                        </p>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</section>
+
+<!-- end feature section -->
+
+
+<!-- contact section -->
+
+<section class="contact_section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form_container">
+                    <div class="heading_container">
+                        <h2>
+                            Contact Us
+                        </h2>
+                    </div>
+                    <form asp-controller="Home" asp-action="ContactUs">
+                        <div>
+                            <input type="text" name="Name" placeholder="Full Name " />
+                        </div>
+                        <div>
+                            <input type="email" name="Email" placeholder="Email" />
+                        </div>
+                        <div>
+                            <input type="text" name="Number" placeholder="Phone number" />
+                        </div>
+                        <div>
+                            <input type="text" name="Message" class="message-box" placeholder="Message" />
+                        </div>
+                        <div class="d-flex ">
+                            <button>
+                                SEND
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="img-box">
+                    <img src="~/timups/images/contact-img.jpg" />
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- end contact section -->
+
+
+<!-- client section -->
+<section class="client_section layout_padding">
+    <div class="container">
+        <div class="heading_container heading_center">
+            <h2>
+                Testimonial
+            </h2>
+        </div>
+        <div class="carousel-wrap ">
+            <div class="owl-carousel client_owl-carousel">
+                <div class="item">
+                    <div class="box">
+                        <div class="img-box">
+                            <img src="~/images/client.jpg" />
+                        </div>
+                        <div class="detail-box">
+                            <div class="client_info">
+                                <div class="client_name">
+                                    <h5>
+                                        Muhtashim Ansari
+                                    </h5>
+                                    <h6>
+                                        Customer
+                                    </h6>
+                                </div>
+                                <i class="fa fa-quote-left" aria-hidden="true"></i>
+                            </div>
+                            <p>
+                                WatchSpace is my go to point when it comes to buying samrt watches online.
+                                Sales team is so colaborative and delivery time is always perfect as well. Highly recommend!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="box">
+                        <div class="img-box">
+                            <img src="~/images/client-1.jpg" />
+                        </div>
+                        <div class="detail-box">
+                            <div class="client_info">
+                                <div class="client_name">
+                                    <h5>
+                                        Adil Asghar
+                                    </h5>
+                                    <h6>
+                                        Customer
+                                    </h6>
+                                </div>
+                                <i class="fa fa-quote-left" aria-hidden="true"></i>
+                            </div>
+                            <p>
+                                Buying quality watches at an affordable rates is what WatchSpace is known for.
+                                Pocket friendly and top notch watches at your door steps. Satisfactory Store!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div class="box">
+                        <div class="img-box">
+                            <img src="~/images/c1.jpg" />
+                        </div>
+                        <div class="detail-box">
+                            <div class="client_info">
+                                <div class="client_name">
+                                    <h5>
+                                        Umair Nisar
+                                    </h5>
+                                    <h6>
+                                        Customer
+                                    </h6>
+                                </div>
+                                <i class="fa fa-quote-left" aria-hidden="true"></i>
+                            </div>
+                            <p>
+                                Huge variety of watches to select from. WatchSpace never disappoints me 
+                                for the quality of watches as well as the pockey friendly prices. 
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+<!-- end client section -->
+

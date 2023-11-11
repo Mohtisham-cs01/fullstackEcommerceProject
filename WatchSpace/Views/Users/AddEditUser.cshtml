@@ -1,0 +1,215 @@
+﻿
+<style>
+
+    .PageLoader {
+        background: #FFFFFF;
+        height: 100vh;
+        width: 100%;
+        position: fixed;
+        z-index: 100;
+    }
+
+    .spinner {
+        display: block;
+        position: fixed;
+        z-index: 1031; /* High z-index so it is on top of the page */
+        top: 50%;
+        right: 50%;
+    }
+</style>
+
+<div class="PageLoader d-none">
+    <div class="spinner spinner-border text-primary text-center" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+
+<body>
+    <section class="contact_section layout_padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form_container">
+                        <div class="heading_container">
+                            <h2>
+                                Register Now
+                            </h2>
+                        </div>
+                      
+
+                            <div class="row mt-5">
+                                <div class="col-sm-12">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label>First Name</label>
+                                                <input type="text" class="form-control" id="Txt_FirstName" value="" placeholder="Please Enter First Name" autocomplete="off">
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label>Last Name</label>
+                                                <input type="text" class="form-control" id="Txt_LastName" value="" placeholder="Please Enter Last Name" autocomplete="off">
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <input type="hidden" id="IsEmailMatched" value="" />
+                                                <label>Email</label>
+                                                <input type="text" class="form-control" id="Txt_Email" value="" placeholder="Please Enter Email" autocomplete="off">
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label>Phone No</label>
+                                                <input type="text" class="form-control" id="Txt_PhoneNo" value="" placeholder="Please Enter Phone No" autocomplete="off">
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <label>Address</label>
+                                                <input type="text" class="form-control" id="Txt_Address" value="" placeholder="Please Enter Address" autocomplete="off">
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6 mt-4">
+                                            <div class="form-group">
+                                                <button type="button" id="BtnSubmit" onclick=submitForm() class=" ">Submit</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                 
+                </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="img-box">
+                        <img src="~/images/contact-img.jpg" style=" border-radius:25px;" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+
+<link href="~/toastr/toastr.css" rel="stylesheet" />
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/toastr/toastr.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.1/dist/sweetalert2.all.min.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+
+        $(document).on("click", "#BtnSubmit", function () {
+            var FirstName = $("#Txt_FirstName").val();
+            var LastName = $("#Txt_LastName").val();
+            var Email = $("#Txt_Email").val();
+            var PhoneNo = $("#Txt_PhoneNo").val();
+            var Address = $("#Txt_Address").val();
+            if (FirstName == undefined || FirstName == null || FirstName == "") {
+                toastr.warning("Please Enter First Name");
+                return false;
+            }
+            if (LastName == undefined || LastName == null || LastName == "") {
+                toastr.warning("Please Enter Last Name");
+                return false;
+            }
+            if (Email == undefined || Email == null || Email == "") {
+                toastr.warning("Please Enter Email");
+                return false;
+            }
+            if (PhoneNo == undefined || PhoneNo == null || PhoneNo == "") {
+                toastr.warning("Please Enter Phone No");
+                return false;
+            }
+            if (Address == undefined || Address == null || Address == "") {
+                toastr.warning("Please Enter Address");
+                return false;
+            }
+            if (Email != undefined && Email != "" && Email != null) {
+                var IsEmailValid = isEmail(Email);
+                if (IsEmailValid == false) {
+                    toastr.error("Please Enter Valid Email");
+                    return false;
+                }
+            }
+            if ($("#IsEmailMatched").val() == "true") {
+                Swal.fire({
+                    icon: 'error',
+                    html: 'The email you entered is already taken. Please use another email.'
+                });
+                return false;
+            }
+            var model = {
+                First_Name: FirstName,
+                Last_Name: LastName,
+                Email: Email,
+                Phone_Number: PhoneNo,
+                Address: Address
+            };
+            var jsonData = JSON.stringify(model);
+            var data = {
+                'TextContent': jsonData
+            };
+            $(".PageLoader").removeClass("d-none");
+            $.ajax({
+                url: '/Users/AddEditUser',
+                type: 'POST',
+                data: data,
+                success: function (result) {
+                    if (result != "") {
+                        toastr.success(result);
+                        setTimeout(function () {
+                            window.location.href = "https://localhost:44311/Users/AddEditUser";
+                        }, 2000);
+                    } else {
+                        toastr.error(result);
+                    }
+                    $(".PageLoader").addClass("d-none");
+                }
+            });
+        });
+
+        $(document).on("focusout", "#Txt_Email", function () {
+            var Email = $(this).val();
+            $("#IsEmailMatched").val("");
+            if (Email != undefined && Email != null && Email != "") {
+                var IsEmailValid = isEmail(Email);
+                if (IsEmailValid == true) {
+                    $(".PageLoader").removeClass("d-none");
+                    $.ajax({
+                        url: '/Users/CheckUserDuplicateEmail',
+                        type: 'POST',
+                        data: { Email: Email },
+                        success: function (result) {
+                            if (result == true) {
+                                $("#IsEmailMatched").val("true");
+                                Swal.fire({
+                                    icon: 'error',
+                                    html: 'The email you entered is already taken. Please use another email.'
+                                });
+                            } else {
+                                $("#IsEmailMatched").val("false");
+                            }
+                            $(".PageLoader").addClass("d-none");
+                        }
+                    });
+                }
+            } else {
+                toastr.warning("Please Enter Email");
+            }
+        });
+
+    });
+
+   
+
+    function isEmail(email) {
+        var EmailRegex = /^([a-zA-Z0-9_.+-])+\@@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        return EmailRegex.test(email);
+    }
+
+</script>

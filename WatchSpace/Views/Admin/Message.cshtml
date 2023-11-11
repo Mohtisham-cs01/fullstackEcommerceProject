@@ -1,0 +1,55 @@
+﻿@using WatchSpace.Models
+
+@model List<ContactUs>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Notifications";
+}
+
+<h2 class="text-center">Message</h2>
+
+<div class="row mt-5">
+    <div class="col-sm-12">
+        <table id="messageDatatable" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th class="text-center">Name</th>
+                    <th class="text-center">Phone Number</th>
+                    <th class="text-center">Email</th>
+                    <th class="text-center">Message</th>
+                    <th class="text-center">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="text-center">@item.Name</td>
+                        <td class="text-center">@item.Number</td>
+                        <td class="text-center">@item.Email</td>
+                        <td class="text-center">@item.Message</td>
+                        <td class="text-center">@item.Date.ToString("dddd, dd MMMM yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+        $('#messageDatatable').DataTable({
+            "ordering": false,
+            "language": {
+                "lengthMenu": "Show _MENU_"
+            },
+            "lengthMenu": [10, 25, 50, 75, 100] // Remove the `Entries` text in pages filter
+        });
+
+    });
+
+</script>

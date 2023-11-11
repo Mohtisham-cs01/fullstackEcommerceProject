@@ -1,0 +1,22 @@
+﻿@model WatchSpace.Models.Product
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var count = ViewBag.count;
+}
+
+
+
+
+<div class="alert alert-success mb-5" role="alert" style=" color: #856404; background-color: #fff3cd; border-color: #ffeeba; ">
+    <h4 class="alert-heading">Alert!</h4>
+    <h1>This products has been ordered @count times , deletion will cause error in genrating reports!</h1>
+
+</div>
+
+<button class="btn btn-primary" onclick="goBack()">Go Back</button>
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>

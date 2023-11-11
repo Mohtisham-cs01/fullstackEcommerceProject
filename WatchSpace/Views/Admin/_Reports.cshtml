@@ -1,0 +1,100 @@
+﻿@using WatchSpace.Models
+
+@model List<Order>
+
+@{
+    Layout = null;
+    var total_profit = 0;
+}
+
+
+
+<div class="row mt-5">
+    <div class="col-sm-12">
+        <table class="table table-bordered reportTable">
+            <thead>
+                <tr>
+                    <th class="text-center">Product Name</th>
+                    <th class="text-center">Original Price</th>
+                    <th class="text-center">Purchased Quantity</th>
+                    <th class="text-center">Total Price</th>
+                    <th class="text-center">Total Bill</th>
+                    <th class="text-center">Profit</th>
+                    <th class="text-center">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var profit = (item.Product.Display_Price * item.PurchasedQuantity) - (item.PurchasedQuantity * item.Product.Orig_Price);
+                    total_profit = Convert.ToInt32(total_profit + profit);
+                    <tr>
+                        <td class="text-center">@item.Product.Name</td>
+                        <td class="text-center">@item.Product.Orig_Price</td>
+                        <td class="text-center">@item.PurchasedQuantity</td>
+                        <td class="text-center">@item.Price</td>
+                        <td class="text-center">@item.TotalBill</td>
+                        <td class="text-center">@profit</td>
+                        <td class="text-center">@item.Date.Value.ToString("dddd, dd MMMM yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="6" class="text-center">Total :</th>
+                    <td>@total_profit</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+@*<div>
+    <button id="exportButton" onclick="createAndDownloadExcel()">Export to Excel</button>
+</div>*@
+
+<script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+<script>
+    function createAndDownloadExcel() {
+        //const orders = [
+        //    { id: 1, customer: 'John Doe', total: 100, date:"2-3-23" },
+        //    { id: 2, customer: 'Jane Smith', total: 150, date: "2-3-23" },
+        //    { id: 3, customer: 'Jane Smith', total: 150, date: "2-3-23"  },
+        //    { id: 4, customer: 'Jane Smith', total: 150, date: "2-3-23" },
+        //    { id: 5, customer: 'Jane Smith', total: 150, date: "2-3-23" },
+
+        //    // Add more order objects as needed
+        //];
+
+        const orders = Html.Raw(Json.Serialize(Model));
+
+
+        const worksheet = XLSX.utils.json_to_sheet(orders);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Orders');
+
+        const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+        const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+        //const fileName = `orders_report_${}.xlsx`;
+        var fileName = `orders_report_${Date.now()}.xlsx`;
+
+
+        if (navigator.msSaveBlob) {
+            // For IE and Edge browsers
+            navigator.msSaveBlob(blob, fileName);
+        } else {
+            // For other browsers
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.setAttribute('download', fileName);
+            link.style.display = 'none';
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
+</script>
+
+

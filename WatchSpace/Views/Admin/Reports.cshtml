@@ -1,0 +1,202 @@
+﻿@using WatchSpace.Models
+
+@model List<Order>
+
+
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var total_profit = 0;
+    ViewData["Title"] = "Reports";
+    Model.Reverse();
+}
+@*@{ bool isListEmpty = Model.Count == 0;
+    string disabledAttribute = Model.Count == 0 ? "disabled" : string.Empty; 
+
+    }*@
+
+<style>
+
+    /** COnfirm Order List Form Alignment*/
+    .dataTables_wrapper .dataTables_filter {
+        display: flex !important;
+        justify-content: end;
+        align-items: end;
+    }
+</style>
+
+
+
+
+<div class="container">
+
+    <div class="row py-3 my-3">
+
+
+
+        <div class="col-sm-6 col-md-4 col-lg-4 col-12">
+            <h2>Reports</h2>
+        </div>
+        <div class="col-sm-6 col-md-8 col-lg-8 col-12 d-flex justify-content-center align-items-center">
+            <div class="form-group mx-3">
+
+                <input type="text" placeholder="Date From" id="dateFrom" class="form-control" autocomplete="off" />
+            </div>
+
+
+            <div class="form-group mx-3">
+                <input type="text" placeholder="Date To" id="dateTo" class="form-control" autocomplete="off" />
+
+            </div>
+
+            <div class="form-group ">
+                <button type="button" class="btn btn-primary btnSearch mx-3">Search</button>
+                <button type="button" class="btn btn-primary btnClear d-none mx-3 my-3">Clear</button>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="reportPartialView container">
+    <div class="row mt-5">
+        <div class="col-sm-12" id="tablePrint">
+            <table class="table table-bordered reportTable">
+                <thead>
+                    <tr>
+                        <th class="text-center">Product Name</th>
+                        <th class="text-center">Original Price</th>
+                        <th class="text-center">Purchased Quantity</th>
+                        <th class="text-center">Total Price</th>
+                        <th class="text-center">Total Bill</th>
+                        <th class="text-center">Profit</th>
+                        <th class="text-center">Original Price</th>
+                        <th class="text-center">Sale Price</th>
+                        <th class="text-center">Date</th>
+
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        var profit = item.Price - (item.PurchasedQuantity * item.Product.Orig_Price);
+                        total_profit = Convert.ToInt32(total_profit + profit);
+                        <tr>
+                            <td class="text-center">@item.Product.Name</td>
+                            <td class="text-center">@item.Product.Orig_Price</td>
+                            <td class="text-center">@item.PurchasedQuantity</td>
+                            <td class="text-center">@item.Price</td>
+                            <td class="text-center">@item.TotalBill</td>
+                            <td class="text-center">@item.Original_Price</td>
+                            <td class="text-center">@item.Sale_Price</td>
+                            <td class="text-center">@profit</td>
+                            <td class="text-center">@item.Date.Value.ToString("dddd, dd MMMM yyyy")</td>
+
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="6" class="text-center">Total :</th>
+                        <td>@total_profit</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+@*<form method="post" asp-controller="Admin" asp-action="downloadReport">
+        <input type="hidden" name="orders" value="@Html.Raw(Json.Serialize(Model))" />
+        <button type="submit">Submit</button>
+    </form>*@
+
+<form method="post" asp-controller="Admin" asp-action="downloadReport">
+    <!-- Other form fields can go here -->
+
+    <input type="hidden" id="hiddenDateFrom" name="DateFrom" value="" />
+    <input type="hidden" id="hiddenDateTo" name="DateTo" value="" />
+
+    <input type="submit"  id="saveBtn" class="btn btn-primary" value="Save to Excel Report"/>
+</form>
+
+@*<button type="submit" onclick="printSection()">Submit</button>*@
+
+
+
+
+<link href="~/toastr/toastr.css" rel="stylesheet" />
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/toastr/toastr.js"></script>
+
+
+
+
+
+<script>
+
+   
+     $(document).ready(function() {
+        var orderCount = @Model.Count;
+
+        if (orderCount === 0) {
+            $("#saveBtn").prop("disabled", true);
+        }
+    });
+
+    $(document).ready(function () {
+        $('.btnSearch').click(function () {
+            var dateFromValue = $('#dateFrom').val();
+            var dateToValue = $('#dateTo').val();
+            $('#hiddenDateFrom').val(dateFromValue);
+            $('#hiddenDateTo').val(dateToValue);
+        });
+    });
+
+    $(document).ready(function () {
+        $('.reportTable').DataTable({
+            "ordering": false
+        });
+
+        $('#dateFrom').datepicker({
+            uiLibrary: 'bootstrap4',
+            format: 'yyyy-mm-dd'
+        });
+
+        $('#dateTo').datepicker({
+            uiLibrary: 'bootstrap4',
+            format: 'yyyy-mm-dd'
+        });
+
+        $(document).on("click", ".btnSearch", function () {
+            var dateFrom = $("#dateFrom").val();
+            var dateTo = $("#dateTo").val();
+            if (dateFrom != "" || dateTo != "") {
+                $('.loader').css('display', 'block');
+                $.ajax({
+                    url: '/Admin/FilterReport',
+                    type: 'GET',
+                    data: {
+                        dateFrom: dateFrom,
+                        dateTo: dateTo
+                    },
+                    success: function (result) {
+                        $(".reportPartialView").html(result);
+                        $('.reportTable').DataTable();
+                        $(".btnClear").removeClass("d-none");
+                        $('.loader').css('display', 'none');
+                    }
+                });
+            } else {
+                toastr.error("Please select date.");
+            }
+        });
+
+        $(document).on("click", ".btnClear", function () {
+            location.reload();
+        });
+
+    });
+</script>

@@ -1,0 +1,50 @@
+﻿@model List<Order>
+@{ 
+    List<Product> products = ViewData["products"] as List<Product>;
+    }
+
+<div class="container my-5">
+    <div class="row mt-5">
+        <div class="col-sm-12">
+            <table class="table  orderTable" border="1" style="border: 2px solid #dee2e6;">
+                <thead>
+                    <tr>
+                        <th class="text-center">Name</th>
+                        <th class="text-center">Email</th>
+                        <th class="text-center">Product Name</th>
+                        <th class="text-center">Purchased Quantity</th>
+                        <th class="text-center">Date</th>
+                        <th class="text-center">Refrence Number</th>
+                        <th class="text-center">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+
+                    @foreach (var item in Model)
+                    {
+                        string customerFullName = item.User.First_Name + " " + item.User.Last_Name;
+
+                    <tr class="">
+                        <td class="text-center">@customerFullName</td>
+                        <td class="text-center">@item.User.Email</td>
+                        <td class="text-center">@products.Where(p => p.Id == item.ProductId).Select(p => p.Name).FirstOrDefault()</td>
+                        <td class="text-center">@item.PurchasedQuantity</td>
+                        <td class="text-center">@item.Date.Value.ToString("dddd, dd MMMM yyyy")</td>
+                        <td class="text-center">
+                            @item.RefrenceNumber
+                            <form asp-controller="Users" asp-action="getInvoice">
+                            <input type="hidden" id="Hidden_UserID" name="refNum" value="@item.RefrenceNumber" />
+                            <button type="submit">Get Invoice</button>
+                           </form>
+                    </td>
+                    <td class="text-center">@item.Status</td>
+
+                    </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
